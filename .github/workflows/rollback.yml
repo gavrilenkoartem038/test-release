@@ -1,0 +1,17 @@
+name: Rollback
+
+on:
+  workflow_dispatch:
+
+jobs:
+  your-job:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Get previous release tag
+        id: previous-release
+        uses: sammcoe/get-previous-release-action@v1
+
+      - name: Echo your prev tag
+        run: echo ${{ steps.previous-release.outputs.tag }}

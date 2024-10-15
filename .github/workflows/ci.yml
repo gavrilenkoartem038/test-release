@@ -1,0 +1,74 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches:
+      - 'release/*'
+
+jobs:
+  install-dependencies:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/common-steps
+      - run: pnpm install --no-frozen-lockfile
+
+  bump_tag:
+    name: bump_tag
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Get Version
+        id: versioning
+        uses: CarterChen247/version-retriever@v1
+      - name: Get the output version
+        run: echo "Version = ${{ steps.versioning.outputs.version }}"
+
+      - name: Bump Version of package.json
+        uses: ramonpaolo/bump-version@v2.3.1
+        with:
+          tag: ${{ steps.versioning.outputs.version }}
+          commit: true
+          branch_to_push: 'main'
+      
+      - uses: actions/checkout@v4
+        with:
+          path: main
+
+      - name: Create Tag
+        uses: negz/create-tag@v1
+        with:
+          version: '${{ steps.versioning.outputs.version }}'
+          message: "Tag - ${{ steps.versioning.outputs.version }}"
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+        with:
+          tag_name: ${{ steps.versioning.outputs.version }}
+          release_name: Release ${{ steps.versioning.outputs.version }}
+          draft: false
+          prerelease: false
+  
+  merge-branch:
+    runs-on: ubuntu-latest
+    needs: bump_tag
+    steps:
+      - uses: everlytic/branch-merge@1.1.2
+        with:
+          github_token: ${{ github.token }}
+          source_ref: 'main'
+          target_branch: ${{ github.ref }}
+          commit_message_template: '[Automated] Merged {source_ref} into target {target_branch}'
+
+  build-app:
+    needs: install-dependencies
+    uses: ./.github/workflows/template-build.yml
+    with:
+      run: pnpm
+      build-script: build
+      artifact-name: build-app
+      artifact-path: build
