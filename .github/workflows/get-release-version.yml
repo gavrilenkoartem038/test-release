@@ -1,0 +1,56 @@
+name: Get release
+
+on:
+  workflow_dispatch:
+
+jobs:
+  your-job:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    - name: 'Get Previous tag'
+      id: previoustag
+      uses: "WyriHaximus/github-action-get-previous-tag@v1"
+      with:
+        fallback: 0.1.0
+
+    - name: 'Get next minor version'
+      id: semvers
+      uses: "WyriHaximus/github-action-next-semvers@v1"
+      with:
+        version: ${{ steps.previoustag.outputs.tag }}
+
+    - name: Create Branch
+      run: |
+        branch_name="release/${{ steps.semvers.outputs.minor }}"
+        git checkout -b $branch_name
+        git push --set-upstream origin $branch_name
+
+    - name: 'Update package.json'
+      uses: BellCubeDev/update-package-version-by-release-tag@v2
+      with:
+        version: ${{ steps.semvers.outputs.minor }}
+        ignore-semver-check: "true"
+        package-json-path: "./package.json"
+
+    - name: Push local repository changes
+      uses: ryohidaka/action-commit-push@v0.2.1
+      with:
+        files: "."
+        commit-user-name: "GitHub Actions"
+        commit-user-email: "actions@github.com"
+        commit-message: 'feat: update package.json version to ${{ steps.semvers.outputs.minor }}'
+    
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+      with:
+        tag_name: ${{ steps.semvers.outputs.minor }}
+        release_name: Release ${{ steps.semvers.outputs.minor }}
+        draft: false
+        prerelease: false

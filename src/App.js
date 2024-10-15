@@ -1,7 +1,9 @@
-import logo from './logo.svg';
-import './App.css';
+import logo from "./logo.svg";
+import "./App.css";
+import { default as data } from "../package.json";
 
 function App() {
+  console.log(data.version);
   return (
     <div className="App">
       <header className="App-header">
@@ -10,7 +12,7 @@ function App() {
           Edit <code>src/App.js</code> and save to reload.
         </p>
         <a
-          className="App-link"
+          className={`version-${data.version}`}
           href="https://reactjs.org"
           target="_blank"
           rel="noopener noreferrer"
