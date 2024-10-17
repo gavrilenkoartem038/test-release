@@ -87,11 +87,10 @@ jobs:
     needs: [build-app, checkout-branch]
     steps:
       - uses: actions/checkout@v4
-      - name: checkout branch
+      - name: cherry-pick commit
         run: |
           git config --global user.email "actions@github.com"
           git config --global user.name "actions-user"
-          git pull
-          git checkout main
+          git branch --set-upstream ${{ needs.checkout-branch.outputs.release_branch }} origin/${{ needs.checkout-branch.outputs.release_branch }}
           git cherry-pick ${{ needs.checkout-branch.outputs.commit_sha }}
           git push
