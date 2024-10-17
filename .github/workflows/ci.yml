@@ -48,14 +48,18 @@ jobs:
           ignore-semver-check: "true"
           package-json-path: "./package.json"
 
-
-      - name: Push local repository changes
-        uses: ryohidaka/action-commit-push@v0.2.1
+      - uses: qoomon/actions--create-commit@v1
+        id: commit
         with:
-          files: "."
-          commit-user-name: "GitHub Actions"
-          commit-user-email: "actions@github.com"
-          commit-message: 'feat: update package.json version to ${{ steps.previoustag.outputs.tag }}'
+          message: 'feat: update package.json version to ${{ steps.previoustag.outputs.tag }}'
+          skip-empty: true
+
+      - if: ${{ steps.commit.outputs.commit != null }}
+        run: git push
+      - name: check_hash
+        env:
+          GITHUB_CONTEXT: ${{ steps.commit.outputs.commit.description }}
+        run: echo "$GITHUB_CONTEXT"
 
   install-dependencies:
     runs-on: ubuntu-22.04
