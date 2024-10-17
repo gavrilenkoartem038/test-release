@@ -91,7 +91,6 @@ jobs:
         run: |
           git config --global user.email "actions@github.com"
           git config --global user.name "actions-user"
-          git pull ${{ github.repositoryUrl }} ${{ needs.checkout-branch.outputs.release_branch }}
-          git checkout main
+          git config --global push.autoSetupRemote true
           git cherry-pick ${{ needs.checkout-branch.outputs.commit_sha }}
           git push origin main
