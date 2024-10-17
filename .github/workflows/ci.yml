@@ -91,6 +91,7 @@ jobs:
         run: |
           git config --global user.email "actions@github.com"
           git config --global user.name "actions-user"
-          git config --global push.autoSetupRemote true
+          git pull
+          git status
           git cherry-pick ${{ needs.checkout-branch.outputs.commit_sha }}
           git push origin main
