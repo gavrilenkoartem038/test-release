@@ -13,6 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       release_branch: ${{ steps.get_version.outputs.result }}
+      commit_sha: ${{ steps.git_commit.outputs.sha }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -47,15 +48,14 @@ jobs:
           version: ${{ steps.previoustag.outputs.tag }}
           ignore-semver-check: "true"
           package-json-path: "./package.json"
+      - run: git add .
 
-
-      - name: Push local repository changes
-        uses: ryohidaka/action-commit-push@v0.2.1
+      - id: git_commit
+        uses: zwaldowski/git-commit-action@v1
         with:
-          files: "."
-          commit-user-name: "GitHub Actions"
-          commit-user-email: "actions@github.com"
-          commit-message: 'feat: update package.json version to ${{ steps.previoustag.outputs.tag }}'
+          commit_message: 'feat: update package.json version to ${{ steps.previoustag.outputs.tag }}'
+      - run: echo "${{ steps.git_commit.outputs.sha }}"
+      - run: git push
 
   install-dependencies:
     runs-on: ubuntu-22.04
@@ -82,11 +82,10 @@ jobs:
     needs: [build-app, checkout-branch]
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: ${{ needs.checkout-branch.outputs.release_branch }}
-      - uses: everlytic/branch-merge@1.1.2
-        with:
-          github_token: ${{ github.token }}
-          source_ref: ${{ needs.checkout-branch.outputs.release_branch }}
-          target_branch: 'main'
-          commit_message_template: '[Automated] Merged {source_ref} into target {target_branch}'
+      - name: checkout branch
+        run: |
+          git config --global user.email "actions@github.com"
+          git config --global user.name "actions-user"
+          git pull
+          git cherry-pick ${{ needs.checkout-branch.outputs.commit_sha }}
+          git push
