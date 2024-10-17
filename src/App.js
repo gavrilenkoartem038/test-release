@@ -5,6 +5,7 @@ import { default as data } from "../package.json";
 function App() {
   console.log(data.version);
   // regular commit
+  // hotfix commit
   return (
     <div className="App">
       <header className="App-header">
