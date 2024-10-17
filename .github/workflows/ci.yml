@@ -20,14 +20,19 @@ jobs:
           fetch-depth: 0
       - name: 'Get Previous tag'
         id: previoustag
-        uses: "WyriHaximus/github-action-get-previous-tag@v1"
-        with:
-          fallback: 0.1.0
+        uses: JinoArch/get-latest-tag@latest
 
+      - name: Output tag
+        env:
+          RELEASE_VERSION: ${{ steps.previoustag.outputs.latestTag }}
+        run: |
+          echo $RELEASE_VERSION
+          echo ${{ steps.previoustag.outputs.latestTag }}
+    
       - uses: actions/github-script@v7
         id: get_version
         env:
-          current_version: ${{ steps.previoustag.outputs.tag }}
+          current_version: ${{ steps.previoustag.outputs.latestTag }}
         with:
           result-encoding: string
           script: |
@@ -45,7 +50,7 @@ jobs:
       - name: 'Update package.json'
         uses: BellCubeDev/update-package-version-by-release-tag@v2
         with:
-          version: ${{ steps.previoustag.outputs.tag }}
+          version: ${{ steps.previoustag.outputs.latestTag }}
           ignore-semver-check: "true"
           package-json-path: "./package.json"
       - run: git add .
@@ -53,7 +58,7 @@ jobs:
       - id: git_commit
         uses: zwaldowski/git-commit-action@v1
         with:
-          commit_message: 'feat: update package.json version to ${{ steps.previoustag.outputs.tag }}'
+          commit_message: 'feat: update package.json version to ${{ steps.previoustag.outputs.latestTag }}'
       - run: echo "${{ steps.git_commit.outputs.sha }}"
       - run: git push
 
