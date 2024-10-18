@@ -1,6 +1,6 @@
 {
   "name": "test-release",
-  "version": "1.51.2",
+  "version": "9.10.0",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.17.0",
