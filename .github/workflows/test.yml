@@ -11,10 +11,4 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Generate Release Tag
-        uses: mokhlesurr031/github-manual-release@v2.0.2
-        with:
-          release-tag-number: '9.9.9'
-          user-email: "${{ github.actor }}"
-          user-name: "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - run: 'echo $GITHUB_REF'
