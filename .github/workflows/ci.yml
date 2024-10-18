@@ -89,8 +89,8 @@ jobs:
       - uses: actions/checkout@v4
       - name: cherry-pick commit
         run: |
-          # git config --global user.email "actions@github.com"
-          # git config --global user.name "actions-user"
+          git config --global user.email "actions@github.com"
+          git config --global user.name "actions-user"
           git status
           git remote update
           git fetch
