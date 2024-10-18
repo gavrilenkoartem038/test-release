@@ -29,20 +29,10 @@ jobs:
         git checkout -b $branch_name
         git push --set-upstream origin $branch_name
 
-    - name: Create Tag
-      uses: negz/create-tag@v1
+    - name: Generate Release Tag
+      uses: mokhlesurr031/github-manual-release@v2.0.2
       with:
-        version: ${{ steps.semvers.outputs.minor }}
-        message: Tag - ${{ steps.semvers.outputs.minor }}
-        token: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: Create Release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
-      with:
-        tag_name: ${{ steps.semvers.outputs.minor }}
-        release_name: Release ${{ steps.semvers.outputs.minor }}
-        draft: false
-        prerelease: false
+        release-tag-number: ${{ steps.semvers.outputs.minor }}
+        user-email: "${{ github.actor }}"
+        user-name: "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
+        github-token: ${{ secrets.GITHUB_TOKEN }}
