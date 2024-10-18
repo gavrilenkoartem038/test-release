@@ -25,6 +25,7 @@ jobs:
       - name: Output tag
         env:
           RELEASE_VERSION: ${{ steps.previoustag.outputs.latestTag }}
+          GITHUB_REF: 'release/${{ steps.previoustag.outputs.latestTag }}'
         run: |
           echo $RELEASE_VERSION
           echo ${{ steps.previoustag.outputs.latestTag }}
@@ -41,6 +42,10 @@ jobs:
             versionArr[versionArr.length - 1] = 0
             const branchName = `release/${versionArr.join('.')}`
             return branchName
+
+      - run: |
+          echo $RELEASE_VERSION
+          echo $GITHUB_REF
 
       - name: checkout branch
         run: |
