@@ -65,23 +65,12 @@ jobs:
         version: ${{ steps.select_next_tag.outputs.next_tag }}
         ignore-semver-check: "true"
         package-json-path: "./package.json"
-    - run: git add .
-    - id: git_commit
-      uses: zwaldowski/git-commit-action@v1
-      with:
-        commit_message: 'feat: update package.json version to ${{ steps.select_next_tag.outputs.next_tag }}'
-    - run: echo "${{ steps.git_commit.outputs.sha }}"
-    - run: git push
 
-    - name: Set outputs
-      id: vars
-      run: echo "sha_short=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
-    - name: Check outputs
-      run: echo ${{ steps.vars.outputs.sha_short }}
-
-    - name: checkout main
+    - name: 'Create commit'
       run: |
-        git checkout main
+        git add .
+        git commit -m 'feat: update package.json version to ${{ steps.select_next_tag.outputs.next_tag }}'
+        git push
     
     - name: Generate Release Tag
       uses: action-pack/github-release@v2
@@ -115,6 +104,11 @@ jobs:
     needs: [build-app, create_release]
     steps:
       - uses: actions/checkout@v4
+
+      - name: Get commit sha
+        id: commit_sha
+        run: echo "commit_sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+
       - name: cherry-pick commit
         run: |
           git config --global user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
@@ -124,5 +118,5 @@ jobs:
           git fetch
           git checkout main
           # git fetch ${{ needs.checkout-branch.outputs.release_branch }}
-          git cherry-pick ${{ needs.create_release.outputs.commit_sha }}
+          git cherry-pick ${{ steps.commit_sha.outputs.commit_sha }}
           git push origin main
