@@ -119,16 +119,13 @@ jobs:
           git cherry-pick ${{ needs.create_release.outputs.commit_sha }}
           git push origin main
 
-  release-next-app-version:
-    name: Release Jira Version
+  jira-release:
     runs-on: ubuntu-latest
     steps:
-      - uses: StalemateInc/jira-release-action@v1
+      - uses: actions/checkout@v3
+      - uses: Medsien/release-to-jira@main
         with:
-          email: 'gavrilenkoartem039@gmail.com'
-          api_token: 'ATATT3xFfGF029oOHkZaYGwG0v3ihqTF1vzJWz4U7UxQTG3BbdSf6NhbXhGITKebf5bo6NlUJx67MtCxxG6j1_h7NCbrm2dEtDQhSA5Aqz6JoCL44ECVKE6xWorXo7T1JCgM-7ohg-dPjMMeIt9m_H4A2l8ZVxIWvKMl-sdsfM8bhBMHDP-gt7E=A4F0D32F'
-          release_name: '1.1.1'
-          subdomain: gavrilenkoartem039
-          jira_project: TEST
-          create: true
-          release: true
+          jira_server: 'https://gavrilenkoartem039.atlassian.net'
+          jira_project: 'TEST'
+          jira_user: 'gavrilenkoartem039@gmail.com'
+          jira_token: 'ATATT3xFfGF029oOHkZaYGwG0v3ihqTF1vzJWz4U7UxQTG3BbdSf6NhbXhGITKebf5bo6NlUJx67MtCxxG6j1_h7NCbrm2dEtDQhSA5Aqz6JoCL44ECVKE6xWorXo7T1JCgM'
