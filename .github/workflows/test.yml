@@ -32,13 +32,27 @@ jobs:
       uses: "WyriHaximus/github-action-next-semvers@v1"
       with:
         version: ${{ steps.previoustag.outputs.tag }}
-    
+  
+
+    - uses: actions/github-script@v7
+      id: get_branch_version
+      env:
+        branch_name: ${{ github.ref_name }}
+      with:
+        result-encoding: string
+        script: |
+          const { branch_name } = process.env
+          const versionArr = branch_name.split('/')
+          const version = `${versionArr[1]}`
+          console.log(version)
+          return version
+
     - name: Select next tag
       id: select_next_tag
       run: |
         if [ "${{ inputs.is_hotfix }}" == "false" ]; then
           echo "release"
-          echo "next_tag=${{ steps.semvers.outputs.minor }}" >> "$GITHUB_OUTPUT"
+          echo "next_tag=${{ steps.get_branch_version.outputs.result }}" >> "$GITHUB_OUTPUT"
         else
           echo "hotfix"
           echo "next_tag=${{ steps.semvers.outputs.patch }}" >> "$GITHUB_OUTPUT"
