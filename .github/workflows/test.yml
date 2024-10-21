@@ -2,19 +2,43 @@ name: Create and Release Tag
 
 on:
   workflow_dispatch:
+    inputs:
+      is_hotfix:
+        description: 'Hotfix'
+        type: choice
+        required: true
+        default: 'false'
+        options:
+          - 'true'
+          - 'false'
 
 jobs:
-  create-tag:
+  your-job:
     runs-on: ubuntu-latest
-
+    
     steps:
-      - name: Set the value
-        id: step_one
-        run: |
-          echo "GITHUB_REF=release/1.1.1" >> $GITHUB_ENV
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - run: |
-          echo $GITHUB_REF
-          echo "${{ env.GITHUB_REF }}"
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    - name: 'Get Previous tag'
+      id: previoustag
+      uses: "WyriHaximus/github-action-get-previous-tag@v1"
+      with:
+        fallback: 0.1.0
+    
+    - name: 'Get next version'
+      id: semvers
+      uses: "WyriHaximus/github-action-next-semvers@v1"
+      with:
+        version: ${{ steps.previoustag.outputs.tag }}
+    
+    - name: Select next tag
+      id: select_next_tag
+      run: |
+        if [ "${{ inputs.is_hotfix }}" == "false" ]; then
+          echo "release"
+          echo "next_tag=${{ steps.semvers.outputs.minor }}" >> "$GITHUB_OUTPUT"
+        else
+          echo "hotfix"
+          echo "next_tag=${{ steps.semvers.outputs.patch }}" >> "$GITHUB_OUTPUT"
+        fi
