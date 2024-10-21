@@ -58,14 +58,17 @@ jobs:
         commit_message: 'feat: update package.json version to ${{ steps.select_next_tag.outputs.next_tag }}'
     - run: echo "${{ steps.git_commit.outputs.sha }}"
     - run: git push
+
+    - name: checkout main
+      run: |
+        git checkout main
     
     - name: Generate Release Tag
-      uses: mokhlesurr031/github-manual-release@v2.0.2
+      uses: action-pack/github-release@v2
       with:
-        release-tag-number: ${{ steps.select_next_tag.outputs.next_tag }}
-        user-name: "${{ github.actor }}"
-        user-email: "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
-        github-token: ${{ secrets.GITHUB_TOKEN }}
+        tag: ${{ steps.select_next_tag.outputs.next_tag }}
+        title: ${{ steps.select_next_tag.outputs.next_tag }}
+        commit: 'main'
 
   install-dependencies:
     runs-on: ubuntu-22.04
