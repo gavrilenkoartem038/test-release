@@ -125,11 +125,11 @@ jobs:
     needs: [merge-branch, create_release]
     steps:
       - run: |
-          curl --request POST  
-            --url 'https://gavrilenkoartem039.atlassian.net/rest/api/3/version'
-            --user 'gavrilenkoartem039@gmail.com:ATATT3xFfGF029oOHkZaYGwG0v3ihqTF1vzJWz4U7UxQTG3BbdSf6NhbXhGITKebf5bo6NlUJx67MtCxxG6j1_h7NCbrm2dEtDQhSA5Aqz6JoCL44ECVKE6xWorXo7T1JCgM-7ohg-dPjMMeIt9m_H4A2l8ZVxIWvKMl-sdsfM8bhBMHDP-gt7E=A4F0D32F'
-            --header 'Accept: application/json'
-            --header 'Content-Type: application/json'
+          curl --request POST \
+            --url 'https://gavrilenkoartem039.atlassian.net/rest/api/3/version' \
+            --user 'gavrilenkoartem039@gmail.com:ATATT3xFfGF029oOHkZaYGwG0v3ihqTF1vzJWz4U7UxQTG3BbdSf6NhbXhGITKebf5bo6NlUJx67MtCxxG6j1_h7NCbrm2dEtDQhSA5Aqz6JoCL44ECVKE6xWorXo7T1JCgM-7ohg-dPjMMeIt9m_H4A2l8ZVxIWvKMl-sdsfM8bhBMHDP-gt7E=A4F0D32F' \
+            --header 'Accept: application/json' \
+            --header 'Content-Type: application/json' \
             --data '{
               "description": "An excellent version",
               "archived": false,
