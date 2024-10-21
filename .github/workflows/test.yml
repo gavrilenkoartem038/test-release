@@ -123,7 +123,7 @@ jobs:
     name: Release Jira Version
     runs-on: ubuntu-latest
     steps:
-      - uses: StalemateInc/jira-release-action@latest
+      - uses: StalemateInc/jira-release-action@v1
         with:
           email: 'gavrilenkoartem039@gmail.com'
           api_token: 'ATATT3xFfGF029oOHkZaYGwG0v3ihqTF1vzJWz4U7UxQTG3BbdSf6NhbXhGITKebf5bo6NlUJx67MtCxxG6j1_h7NCbrm2dEtDQhSA5Aqz6JoCL44ECVKE6xWorXo7T1JCgM-7ohg-dPjMMeIt9m_H4A2l8ZVxIWvKMl-sdsfM8bhBMHDP-gt7E=A4F0D32F'
