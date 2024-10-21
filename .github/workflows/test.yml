@@ -8,6 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       commit_sha: ${{ steps.commit_sha.outputs.commit_sha }} 
+      next_tag: ${{ steps.select_next_tag.outputs.next_tag }}
     steps:
     - uses: actions/checkout@v4
       with:
@@ -121,11 +122,19 @@ jobs:
 
   jira-release:
     runs-on: ubuntu-latest
+    needs: [merge-branch, create_release]
     steps:
-      - uses: actions/checkout@v3
-      - uses: Medsien/release-to-jira@main
-        with:
-          jira_server: 'https://gavrilenkoartem039.atlassian.net'
-          jira_project: 'TEST'
-          jira_user: 'gavrilenkoartem039@gmail.com'
-          jira_token: 'ATATT3xFfGF029oOHkZaYGwG0v3ihqTF1vzJWz4U7UxQTG3BbdSf6NhbXhGITKebf5bo6NlUJx67MtCxxG6j1_h7NCbrm2dEtDQhSA5Aqz6JoCL44ECVKE6xWorXo7T1JCgM'
+      - run: |
+          'curl --request POST  
+            --url 'https://gavrilenkoartem039.atlassian.net/rest/api/3/version'
+            --user 'gavrilenkoartem039@gmail.com:ATATT3xFfGF029oOHkZaYGwG0v3ihqTF1vzJWz4U7UxQTG3BbdSf6NhbXhGITKebf5bo6NlUJx67MtCxxG6j1_h7NCbrm2dEtDQhSA5Aqz6JoCL44ECVKE6xWorXo7T1JCgM-7ohg-dPjMMeIt9m_H4A2l8ZVxIWvKMl-sdsfM8bhBMHDP-gt7E=A4F0D32F'
+            --header 'Accept: application/json'
+            --header 'Content-Type: application/json'
+            --data '{
+              "description": "An excellent version",
+              "archived": false,
+              "name": ${{ needs.create_release.outputs.commit_sha }},
+              "projectId": 10000,
+              "released": true
+            }'
+          
