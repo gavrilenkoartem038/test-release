@@ -2,21 +2,12 @@ name: Create and Release Tag
 
 on:
   workflow_dispatch:
-    inputs:
-      is_hotfix:
-        description: 'Hotfix'
-        type: choice
-        required: true
-        default: 'false'
-        options:
-          - 'true'
-          - 'false'
 
 jobs:
   create_release:
     runs-on: ubuntu-latest
     outputs:
-      commit_sha: ${{ steps.git_commit.outputs.sha }} 
+      commit_sha: ${{ steps.commit_sha.outputs.sha }} 
     steps:
     - uses: actions/checkout@v4
       with:
@@ -47,15 +38,21 @@ jobs:
           console.log(version)
           return version
 
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+      
     - name: Select next tag
       id: select_next_tag
       run: |
-        if [ "${{ inputs.is_hotfix }}" == "false" ]; then
-          echo "release"
-          echo "next_tag=${{ steps.get_branch_version.outputs.result }}" >> "$GITHUB_OUTPUT"
-        else
-          echo "hotfix"
+        TAG=${{ steps.get_branch_version.outputs.result }}
+        if git show-ref --tags --verify --quiet "refs/tags/${TAG}"; then
+          echo "Tag ${TAG} exists"
           echo "next_tag=${{ steps.semvers.outputs.patch }}" >> "$GITHUB_OUTPUT"
+        else
+          echo "Tag ${TAG} does not exist"
+          echo "next_tag=${TAG}" >> "$GITHUB_OUTPUT"
         fi
     
     - name: 'Update package.json'
@@ -74,6 +71,10 @@ jobs:
         git commit -m 'feat: update package.json version to ${{ steps.select_next_tag.outputs.next_tag }}'
         git push
     
+    - name: Get commit sha
+      id: commit_sha
+      run: echo "commit_sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+
     - name: Generate Release Tag
       uses: action-pack/github-release@v2
       with:
@@ -107,10 +108,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Get commit sha
-        id: commit_sha
-        run: echo "commit_sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
-
       - name: cherry-pick commit
         run: |
           git config --global user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
@@ -120,5 +117,5 @@ jobs:
           git fetch
           git checkout main
           # git fetch ${{ needs.checkout-branch.outputs.release_branch }}
-          git cherry-pick ${{ steps.commit_sha.outputs.commit_sha }}
+          git cherry-pick ${{ needs.commit_sha.outputs.commit_sha }}
           git push origin main
