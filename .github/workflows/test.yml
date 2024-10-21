@@ -13,9 +13,10 @@ on:
           - 'false'
 
 jobs:
-  your-job:
+  create_release:
     runs-on: ubuntu-latest
-    
+    outputs:
+      commit_sha: ${{ steps.git_commit.outputs.sha }} 
     steps:
     - uses: actions/checkout@v4
       with:
@@ -42,3 +43,63 @@ jobs:
           echo "hotfix"
           echo "next_tag=${{ steps.semvers.outputs.patch }}" >> "$GITHUB_OUTPUT"
         fi
+    
+    - name: 'Update package.json'
+      id: create_commit
+      uses: BellCubeDev/update-package-version-by-release-tag@v2
+      with:
+        version: ${{ steps.select_next_tag.outputs.next_tag }}
+        ignore-semver-check: "true"
+        package-json-path: "./package.json"
+    - run: git add .
+    - id: git_commit
+      uses: zwaldowski/git-commit-action@v1
+      with:
+        commit_message: 'feat: update package.json version to ${{ steps.select_next_tag.outputs.next_tag }}'
+    - run: echo "${{ steps.git_commit.outputs.sha }}"
+    - run: git push
+    
+    - name: Generate Release Tag
+      uses: mokhlesurr031/github-manual-release@v2.0.2
+      with:
+        release-tag-number: ${{ steps.select_next_tag.outputs.next_tag }}
+        user-name: "${{ github.actor }}"
+        user-email: "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+
+  install-dependencies:
+    runs-on: ubuntu-22.04
+    needs: checkout-branch
+    steps:
+      - uses: actions/checkout@v4
+      - name: Display Branch Name
+        run: |
+          echo "Current Branch: ${{ github.ref }}"
+      - uses: ./.github/actions/common-steps
+      - run: pnpm install --no-frozen-lockfile
+  
+  build-app:
+    needs: [install-dependencies, checkout-branch]
+    uses: ./.github/workflows/template-build.yml
+    with:
+      run: pnpm
+      build-script: build
+      artifact-name: build-app
+      artifact-path: build
+
+  merge-branch:
+    runs-on: ubuntu-latest
+    needs: [build-app, checkout-branch]
+    steps:
+      - uses: actions/checkout@v4
+      - name: cherry-pick commit
+        run: |
+          git config --global user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
+          git config --global user.name "${{ github.actor }}"
+          git status
+          git remote update
+          git fetch
+          git checkout main
+          # git fetch ${{ needs.checkout-branch.outputs.release_branch }}
+          git cherry-pick ${{ needs.create_release.outputs.commit_sha }}
+          git push origin main

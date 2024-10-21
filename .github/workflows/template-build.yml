@@ -15,17 +15,12 @@ on:
       artifact-path:
         required: true
         type: string
-      branch-name:
-        required: true
-        type: string
 
 jobs:
   build-template:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: ${{ inputs.branch-name }}
       - name: check branch
         run: |
           git branch
