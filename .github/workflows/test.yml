@@ -73,6 +73,12 @@ jobs:
     - run: echo "${{ steps.git_commit.outputs.sha }}"
     - run: git push
 
+    - name: Set outputs
+      id: vars
+      run: echo "sha_short=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+    - name: Check outputs
+      run: echo ${{ steps.vars.outputs.sha_short }}
+
     - name: checkout main
       run: |
         git checkout main
