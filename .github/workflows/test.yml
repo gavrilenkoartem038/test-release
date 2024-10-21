@@ -117,5 +117,5 @@ jobs:
           git fetch
           git checkout main
           # git fetch ${{ needs.checkout-branch.outputs.release_branch }}
-          git cherry-pick ${{ needs.commit_sha.outputs.commit_sha }}
+          git cherry-pick ${{ needs.create_release.outputs.commit_sha }}
           git push origin main
