@@ -133,7 +133,7 @@ jobs:
             --data '{
               "description": "An excellent version",
               "archived": false,
-              "name": ${{ needs.create_release.outputs.commit_sha }},
+              "name": "${{ needs.create_release.outputs.next_tag }}",
               "projectId": 10000,
               "released": true
             }'
