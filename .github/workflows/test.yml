@@ -68,6 +68,8 @@ jobs:
 
     - name: 'Create commit'
       run: |
+        git config --global user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
+        git config --global user.name "${{ github.actor }}"
         git add .
         git commit -m 'feat: update package.json version to ${{ steps.select_next_tag.outputs.next_tag }}'
         git push
