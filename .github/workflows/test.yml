@@ -7,7 +7,7 @@ jobs:
   create_release:
     runs-on: ubuntu-latest
     outputs:
-      commit_sha: ${{ steps.commit_sha.outputs.sha }} 
+      commit_sha: ${{ steps.commit_sha.outputs.commit_sha }} 
     steps:
     - uses: actions/checkout@v4
       with:
