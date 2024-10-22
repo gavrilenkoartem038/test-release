@@ -127,7 +127,7 @@ jobs:
       - name: Get current date
         id: date
         run: |
-          echo "date=$('%Y/%m/%d')" >> "$GITHUB_OUTPUT"
+          echo "date=$('%Y-%m-%d')" >> "$GITHUB_OUTPUT"
 
       - run: |
           curl --request POST \
