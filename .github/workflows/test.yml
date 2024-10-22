@@ -146,7 +146,7 @@ jobs:
               "archived": false,
               "name": "${{ needs.create_release.outputs.next_tag }}",
               "projectId": 10000,
+              "releaseDate": "${{ steps.date.outputs.date }}",
               "released": true
             }'
           
-              # "releaseDate": "${{ steps.date.outputs.date }}"
