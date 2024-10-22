@@ -145,7 +145,7 @@ jobs:
               "description": "An excellent version",
               "archived": false,
               "name": "${{ needs.create_release.outputs.next_tag }}",
-              "releaseDate": "${{ steps.date.outputs.date }}"
+              # "releaseDate": "${{ steps.date.outputs.date }}"
               "projectId": 10000,
               "released": true
             }'
