@@ -132,9 +132,6 @@ jobs:
         run: echo ${{ steps.date.outputs.date }}
 
       - name: Create JIRA Release
-        env:
-          JIRA_EMAIL: ${{ secrets.JIRA_EMAIL }}
-          JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}
         run: |
           curl --request POST \
             --url 'https://gavrilenkoartem039.atlassian.net/rest/api/3/version' \
