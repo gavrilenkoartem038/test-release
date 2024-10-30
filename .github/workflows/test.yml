@@ -123,6 +123,9 @@ jobs:
     needs: jira-release
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+
       - uses: ./.github/actions/common-steps
       - run: pnpm install --no-frozen-lockfile
   
