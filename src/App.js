@@ -1,9 +1,9 @@
 import logo from "./logo.svg";
 import "./App.css";
-import { default as data } from "../package.json";
+import { version } from "../package.json";
 
 function App() {
-  console.log(data.version);
+  console.log(version);
   // regular commit
   // hotfix commit
 
@@ -27,5 +27,7 @@ function App() {
     //hotfix 2
   );
 }
+
+App.version = version;
 
 export default App;
