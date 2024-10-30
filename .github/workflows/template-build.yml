@@ -21,6 +21,12 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
+      - name: Display latest commit
+        run: |
+          git log
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
       - name: check branch
         run: |
           git branch
