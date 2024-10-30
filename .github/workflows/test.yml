@@ -86,7 +86,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: create_release
     outputs:
-      jira-release-id: ${{ steps.create-jira-release.outputs.id }} 
+      jira-release-id: ${{ steps.get-release-id.outputs.id }} 
     steps:
       - name: Get current date
         id: date
@@ -108,11 +108,15 @@ jobs:
               "releaseDate": "${{ steps.date.outputs.date }}",
               "released": false
             }')
-          echo "result=$RESULT" >> "$GITHUB_ENV"
-          echo "id=${{ fromJSON(env.result).id }}" >> "$GITHUB_OUTPUT"
+          echo "result=$RESULT" >> "$GITHUB_OUTPUT"
+
+      - name: Get release id
+        id: get-release-id
+        run: |
+          echo "id=${{ fromJSON(steps.create-jira-release.outputs.result).id }}" >> "$GITHUB_OUTPUT"
 
       - run: |
-          echo Ticket id: "${{ steps.create-jira-release.outputs.id }}"
+          echo Ticket id: "${{ steps.get-release-id.outputs.id }}"
       
   install-dependencies:
     runs-on: ubuntu-22.04
