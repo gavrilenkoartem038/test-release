@@ -29,7 +29,7 @@ jobs:
           ref: ${{ github.ref }}
       - name: check branch
         run: |
-          git branch
+          git log
       - uses: ./.github/actions/common-steps
 
       - name: Build
