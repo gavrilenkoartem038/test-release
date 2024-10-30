@@ -130,8 +130,9 @@ jobs:
         run: echo ${{ steps.date.outputs.date }}
 
       - name: Create JIRA Release
+        id: create-ticket
         run: |
-          curl --request POST \
+          RESULT=$(curl --request POST \
             --url 'https://gavrilenkoartem039.atlassian.net/rest/api/3/version' \
             --user '${{ secrets.JIRA_EMAIL }}:${{ secrets.JIRA_TOKEN }}' \
             --header 'Accept: application/json' \
@@ -141,6 +142,15 @@ jobs:
               "name": "${{ needs.create_release.outputs.next_tag }}",
               "projectId": 10000,
               "releaseDate": "${{ steps.date.outputs.date }}",
-              "released": true
-            }'
+              "released": false
+            }')
+
+          echo "result=$RESULT" >> "$GITHUB_OUTPUT"
+      
+      - run: |
+          echo Result from the prev step: "${{ steps.create-ticket.outputs.result }}"
+      
+      - run: | 
+          echo Ticket id: ${{ fromJSON(steps.create-ticket.outputs.result).id }}
+
           
