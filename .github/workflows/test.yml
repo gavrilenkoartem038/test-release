@@ -145,12 +145,19 @@ jobs:
               "released": false
             }')
 
-          echo "result=$RESULT" >> "$GITHUB_OUTPUT"
+          echo "id=$RESULT" >> "$GITHUB_OUTPUT"
       
-      - run: |
-          echo Result from the prev step: "${{ steps.create-ticket.outputs.result }}"
-      
-      - run: | 
-          echo Ticket id: ${{ fromJSON(steps.create-ticket.outputs.result).id }}
+      - name: Update JIRA Release status
+        id: update-release
+        run: |
+          curl --request PUT \
+            --url 'https://gavrilenkoartem039.atlassian.net/rest/api/3/version/${{ fromJSON(steps.create-ticket.outputs.result).id }}' \
+            --user '${{ secrets.JIRA_EMAIL }}:${{ secrets.JIRA_TOKEN }}' \
+            --header 'Accept: application/json' \
+            --header 'Content-Type: application/json' \
+            --data '{
+              "released": true
+            }'
+
 
           
