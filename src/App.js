@@ -1,6 +1,6 @@
 import logo from "./logo.svg";
 import "./App.css";
-import { version } from "../package.json";
+import packageInfo from "../package.json";
 
 function App() {
   console.log(version);
@@ -28,6 +28,6 @@ function App() {
   );
 }
 
-App.version = version;
+App.version = packageInfo.version;
 
 export default App;
