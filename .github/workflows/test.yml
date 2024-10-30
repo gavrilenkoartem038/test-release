@@ -162,7 +162,7 @@ jobs:
 
   jira-release-update:
     runs-on: ubuntu-latest
-    needs: [merge-branch, create_release]
+    needs: [merge-branch, jira-release]
     steps:
       - name: Update JIRA Release status
         id: update-release
