@@ -87,9 +87,15 @@ jobs:
     needs: create_release
     steps:
       - uses: actions/checkout@v4
-      - name: Display Branch Name
+      - name: Display latest commit
         run: |
-          echo "Current Branch: ${{ github.ref }}"
+          git log
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+      - name: Display latest commit
+        run: |
+          git log
       - uses: ./.github/actions/common-steps
       - run: pnpm install --no-frozen-lockfile
   
@@ -112,10 +118,8 @@ jobs:
         run: |
           git config --global user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
           git config --global user.name "${{ github.actor }}"
-          git log
           git remote update
           git fetch
-          git log
           git checkout main
           git cherry-pick ${{ needs.create_release.outputs.commit_sha }}
           git push origin main
