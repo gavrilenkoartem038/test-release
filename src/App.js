@@ -3,7 +3,6 @@ import "./App.css";
 import packageInfo from "../package.json";
 
 function App() {
-  console.log(version);
   // regular commit
   // hotfix commit
 
@@ -15,7 +14,7 @@ function App() {
           Edit <code>src/App.js</code> and save to reload.
         </p>
         <a
-          className={`version-${data.version}`}
+          className={`version-${packageInfo.version}`}
           href="https://reactjs.org"
           target="_blank"
           rel="noopener noreferrer"
