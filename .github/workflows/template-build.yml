@@ -27,10 +27,9 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.ref }}
-      - name: check branch
+      - name: Display latest commit
         run: |
-          git branch
-      - uses: ./.github/actions/common-steps
+          git log
 
       - name: Build
         run: ${{ inputs.run }} ${{ inputs.build-script }}
