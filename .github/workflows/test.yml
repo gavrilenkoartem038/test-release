@@ -108,8 +108,8 @@ jobs:
               "releaseDate": "${{ steps.date.outputs.date }}",
               "released": false
             }')
-
-          echo "id=${{ fromJSON($RESULT).id }}" >> "$GITHUB_OUTPUT"
+          echo "result=$RESULT" >> "$GITHUB_ENV"
+          echo "id=${{ fromJSON(env.result).id }}" >> "$GITHUB_OUTPUT"
 
       - run: |
           echo Ticket id: "${{ steps.create-jira-release.outputs.id }}"
