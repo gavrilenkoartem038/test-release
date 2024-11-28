@@ -1,7 +1,7 @@
 name: Create release
 
 on:
-  workflow_dispatch:
+  pull_request:
 
 jobs:
   your-job:
@@ -23,16 +23,17 @@ jobs:
       with:
         version: ${{ steps.previoustag.outputs.tag }}
 
-    - name: Create Branch
+    - name: check commit message
+      id: commit_message
       run: |
-        branch_name="release/${{ steps.semvers.outputs.minor }}"
-        git checkout -b $branch_name
-        git push --set-upstream origin $branch_name
+        commit=${{ github.event.commits[0] }}
+        message=${{ github.event.commits[0].message }}
+        contains(github.event.commits[0].message, '[e2e]')
+        echo "${commit}"
+        echo "${message}"
+        echo "${message}"
 
-    - name: Generate Release Tag
-      uses: mokhlesurr031/github-manual-release@v2.0.2
-      with:
-        release-tag-number: ${{ steps.semvers.outputs.minor }}
-        user-email: "${{ github.actor }}"
-        user-name: "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
-        github-token: ${{ secrets.GITHUB_TOKEN }}
+    - name: test if
+      if: "contains(github.event.commits[0].message, '[e2e]')"
+      run: |
+        echo "contain [e2e]"
