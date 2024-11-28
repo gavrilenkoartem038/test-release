@@ -42,6 +42,7 @@ jobs:
         COMMIT_MESSAGE=$(git log -1 --pretty=%B)
         echo "Commit Message: $COMMIT_MESSAGE"
         echo "commit-message=$COMMIT_MESSAGE" >> $GITHUB_OUTPUT
+  
 
   test-e2e:
     runs-on: ubuntu-latest
