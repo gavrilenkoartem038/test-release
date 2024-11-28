@@ -23,13 +23,19 @@ jobs:
       with:
         version: ${{ steps.previoustag.outputs.tag }}
 
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 2
+
+    
     - name: Output latest commit message
       run: |
-        echo "Latest Commit Message: ${{ github.event.head_commit.message }}"
+        # Fetch the PR branch's latest commit using the SHA
+        # git fetch origin ${{ github.event.pull_request.head.sha }}
+        git checkout ${{ github.event.pull_request.head.sha }}
+        # Extract the commit message
         COMMIT_MESSAGE=$(git log -1 --pretty=%B)
-        HEAD_COMMIT_MESSAGE=$(git show -s --format=%s)
         echo "Commit Message: $COMMIT_MESSAGE"
-        echo "HEAD Commit Message: $HEAD_COMMIT_MESSAGE"
         echo "COMMIT_MESSAGE=$COMMIT_MESSAGE" >> $GITHUB_ENV
 
     - name: test if
