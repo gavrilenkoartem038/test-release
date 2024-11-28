@@ -27,16 +27,27 @@ jobs:
       with:
         fetch-depth: 2
 
-    
+  get-commit-message:
+    runs-on: ubuntu-latest
+    needs: your-job
+    outputs:
+      last_commit_message: ${{ steps.get-commit-message.outputs.contains_e2e }}
+    steps:
+    - uses: actions/checkout@v4
     - name: Output latest commit message
+      id: get-commit-message
       run: |
         git fetch origin ${{ github.event.pull_request.head.sha }}
         git checkout ${{ github.event.pull_request.head.sha }}
         COMMIT_MESSAGE=$(git log -1 --pretty=%B)
         echo "Commit Message: $COMMIT_MESSAGE"
-        echo "COMMIT_MESSAGE=$COMMIT_MESSAGE" >> $GITHUB_ENV
+        echo "commit-message=$COMMIT_MESSAGE" >> $GITHUB_OUTPUT
 
+  test-e2e:
+    runs-on: ubuntu-latest
+    needs: get-commit-message 
+    steps:
     - name: test if
-      if: contains(env.COMMIT_MESSAGE, '[e2e]')
+      if: contains(needs.get-commit-message.outputs.last_commit_message, '[e2e]')
       run: |
         echo "contain [e2e]"
