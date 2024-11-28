@@ -30,10 +30,7 @@ jobs:
     
     - name: Output latest commit message
       run: |
-        # Fetch the PR branch's latest commit using the SHA
-        # git fetch origin ${{ github.event.pull_request.head.sha }}
         git checkout ${{ github.event.pull_request.head.sha }}
-        # Extract the commit message
         COMMIT_MESSAGE=$(git log -1 --pretty=%B)
         echo "Commit Message: $COMMIT_MESSAGE"
         echo "COMMIT_MESSAGE=$COMMIT_MESSAGE" >> $GITHUB_ENV
