@@ -17,6 +17,6 @@ function App() {
   );
 }
 
-App.version = packageInfo.version;
+// App.version = packageInfo.version;
 
 export default App;

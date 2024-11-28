@@ -23,17 +23,16 @@ jobs:
       with:
         version: ${{ steps.previoustag.outputs.tag }}
 
-    - name: check commit message
-      id: commit_message
+    - name: Output latest commit message
       run: |
-        commit=${{ github.event.commits[0] }}
-        message=${{ github.event.commits[0].message }}
-        contains(github.event.commits[0].message, '[e2e]')
-        echo "${commit}"
-        echo "${message}"
-        echo "${message}"
+        echo "Latest Commit Message: ${{ github.event.head_commit.message }}"
+        COMMIT_MESSAGE=$(git log -1 --pretty=%B)
+        HEAD_COMMIT_MESSAGE=$(git show -s --format=%s)
+        echo "Commit Message: $COMMIT_MESSAGE"
+        echo "HEAD Commit Message: $HEAD_COMMIT_MESSAGE"
+        echo "COMMIT_MESSAGE=$COMMIT_MESSAGE" >> $GITHUB_ENV
 
     - name: test if
-      if: "contains(github.event.commits[0].message, '[e2e]')"
+      if: contains(env.COMMIT_MESSAGE, '[e2e]')
       run: |
         echo "contain [e2e]"
