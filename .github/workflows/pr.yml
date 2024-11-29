@@ -26,7 +26,7 @@ jobs:
   get-changed-packages: 
     runs-on: ubuntu-latest
     outputs:
-      changed_files: ${{ steps.get-changed-packages.outputs.result }}
+      changed_files: ${{ steps.get-packages.outputs.result }}
     steps:
     - uses: actions/checkout@v4
       with:
@@ -38,7 +38,7 @@ jobs:
         echo "Changed files: $CHANGED_FILES"
         echo "changed_files=$CHANGED_FILES" >> $GITHUB_ENV
     
-    - name: get-changed-packages
+    - name: get-packages
       uses: actions/github-script@v7
       with:
         result-encoding: string
@@ -46,31 +46,32 @@ jobs:
           const changedFiles = process.env.changed_files.split(',').filter(name => name !== "");
           console.log(changedFiles);
 
-          const result = [];
+          const resultArr = [];
 
           changedFiles.forEach((path) => {
             if (path.startsWith(".github/workflows")) {
-              result.push(...["app", "lib", "logger", "player"]);
+              resultArr.push(...["app", "lib", "logger", "player"]);
             } else if (path.startsWith("packages/")) {
               const key = path.split("/")[1];
 
               if (key === "logger") {
-                result.push("logger");
+                resultArr.push("logger");
               } else if (key === "app") {
-                result.push("app");
+                resultArr.push("app");
               } else if (key === "lib") {
-                result.push("lib");
+                resultArr.push("lib");
               } else if (key === "tma") {
-                result.push("lib");
+                resultArr.push("lib");
               } else if (key === "player") {
-                result.push("player", "lib");
+                resultArr.push("player", "lib");
               }
             }
           });
 
-          console.log([...new Set(result)].join(','))
+          const result = [...new Set(result)].join(',')
+          console.log(result)
 
-          return [...new Set(result)].join(',');
+          return result;
 
   test-outputs:
     runs-on: ubuntu-latest
@@ -79,7 +80,7 @@ jobs:
     steps:
       - run: |
           echo "contain app"
-          echo ${{ needs.get-changed-packages.outputs.changed_files }}
+          echo "Output from first job: ${{ needs.get-changed-packages.outputs.changed_files }}"
     
 
   get-commit-message:
