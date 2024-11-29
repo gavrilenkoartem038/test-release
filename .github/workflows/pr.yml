@@ -41,6 +41,7 @@ jobs:
     - name: get-changed-packages
       uses: actions/github-script@v7
       with:
+        result-encoding: string
         script: |
           const changedFiles = process.env.changed_files.split(',').filter(name => name !== "");
           console.log(changedFiles);
