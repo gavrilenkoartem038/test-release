@@ -30,7 +30,18 @@ jobs:
       - name: check branch
         run: |
           git log
-      - uses: ./.github/actions/common-steps
+
+      - uses: actions/cache@v4
+        with:
+          path: |
+            node_modules/
+            .pnpm-store
+          key: ${{ hashFiles('pnpm-lock.yaml') }}
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
 
       - name: Build
         run: ${{ inputs.run }} ${{ inputs.build-script }}
