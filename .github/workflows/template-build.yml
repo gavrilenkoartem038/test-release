@@ -30,8 +30,7 @@ jobs:
       - name: check branch
         run: |
           git log
-      - uses: ./.github/actions/common-steps
-
+      # - uses: ./.github/actions/common-steps
       - name: Build
         run: ${{ inputs.run }} ${{ inputs.build-script }}
 
