@@ -2,8 +2,10 @@ import "./App.css";
 import packageInfo from "../package.json";
 import { TonConnectButton, TonConnectUIProvider } from "@tonconnect/ui-react";
 import Wallet from "./Wallet";
+import axios from "axios";
 
 function App() {
+  axios.get("fdsa");
   return (
     <TonConnectUIProvider manifestUrl="https://rose-peculiar-canid-53.mypinata.cloud/ipfs/QmcMpYRbDS8GGi5MNoeXYYrdU6pTUGpNLPRnWrfzojw6v5">
       <div className="App">
